@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "num_scenarios": 5,
+    "created_date": "2025-04-08 14:26:58.674619",
+    "description": "Poker hand win probability test scenarios"
+  },
+  "scenarios": [
+    {
+      "hole_cards": [
+        "C6",
+        "D3"
+      ],
+      "community_cards": [],
+      "true_win_probability": 0.3637
+    },
+    {
+      "hole_cards": [
+        "SQ",
+        "ST"
+      ],
+      "community_cards": [
+        "H8",
+        "D4"
+      ],
+      "true_win_probability": 0.4838
+    },
+    {
+      "hole_cards": [
+        "D2",
+        "ST"
+      ],
+      "community_cards": [],
+      "true_win_probability": 0.4102
+    },
+    {
+      "hole_cards": [
+        "C3",
+        "HT"
+      ],
+      "community_cards": [
+        "H6",
+        "S2",
+        "HK"
+      ],
+      "true_win_probability": 0.3001
+    },
+    {
+      "hole_cards": [
+        "CQ",
+        "C5"
+      ],
+      "community_cards": [
+        "D8",
+        "SK",
+        "SA"
+      ],
+      "true_win_probability": 0.4512
+    }
+  ]
+}

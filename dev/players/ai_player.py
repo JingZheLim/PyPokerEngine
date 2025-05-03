@@ -1,74 +1,149 @@
 from pypokerengine.players import BasePokerPlayer
-from pypokerengine.utils.card_utils import gen_cards, estimate_hole_card_win_rate
+from openai import OpenAI
+import json
+API = "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"
+GEMAPI = "AIzaSyCBvmMlQfRNpRlq3UzctB_tUXVKlqgcGQI"
 
-NB_SIMULATION = 1000
 
 class AiPlayer(BasePokerPlayer):
-    
     def declare_action(self, valid_actions, hole_card, round_state):
         fold = valid_actions[0]
         call = valid_actions[1]
         raise_action = valid_actions[2]
         
-        community_card = round_state['community_card'] # Gets Communitiy Cards
-        win_rate = estimate_hole_card_win_rate(
-                nb_simulation=NB_SIMULATION,
-                nb_player=self.nb_player,
-                hole_card=gen_cards(hole_card),
-                community_card=gen_cards(community_card)
-                )
-        # Gets how much is in the pot    
+        community_card = round_state['community_card']
         pot_size = round_state['pot']['main']['amount']
-        
-        # Get what the current round is whethere it is (preflop, flop, turn, river)
         street = round_state['street']
         
-                
-        # Calulating the pot odds
-        # The ratio between the size of the pot and the amount needed to call
+        # Calculate current betting situation
         current_highest_bet = 0
         my_current_bet = 0
         
-        # Get the highest bet
         if street in round_state['action_histories']:
             for action_history in round_state['action_histories'][street]:
                 if 'amount' in action_history:
                     current_highest_bet = max(current_highest_bet, action_history['amount'])
                 
-                # Get the highest bet that i've currently made
                 if action_history['uuid'] == self.uuid and 'amount' in action_history:
                     my_current_bet = action_history['amount']
         
-        # Calculate the call amount and the pot odds
-        # The difference between the highest bet and what you've bet
         call_amount = current_highest_bet - my_current_bet
-        
-        pot_odds = call_amount / (pot_size + call_amount)
-        
+        pot_odds = call_amount / (pot_size + call_amount) if (pot_size + call_amount) > 0 else 0
         
         min_raise = raise_action['amount']['min']
         max_raise = raise_action['amount']['max']
-        print(f"Pot size: {pot_size}, Call amount: {call_amount}, Pot odds: {pot_odds}, Win Rate: {win_rate}")
         
-        if win_rate > 0.8:
-            bet = max_raise  # Strong hands (raise big)
-            return raise_action['action'], bet # call RAISE action with random bet
+        # Prepare game state for LLM API call
+        game_state = {
+            "hole_cards": hole_card,
+            "community_cards": community_card,
+            "pot_size": pot_size,
+            "street": street,
+            "call_amount": call_amount,
+            "min_raise": min_raise,
+            "max_raise": max_raise,
+            "pot_odds": pot_odds
+        }
         
-        elif win_rate > 0.6:
-            bet = int(0.75 * pot_size)  # Strong but not dominating (raise 75% of pot)
-            return raise_action['action'], bet # call RAISE action with random bet
+        # Call LLM API to get decision
+        action_decision = self.call_llm_api(game_state)
         
-        elif win_rate > 0.4:
-            bet = min_raise  # Mediocre hands (raise small)
-            return raise_action['action'], bet # call RAISE action with random bet
-        
-        
-        elif win_rate < 0.3 and pot_odds < 0.2:  # Weak hand + bad pot odds
-            action = fold # FOLD
-        else:
-            action = call # CALL
+        # Process the LLM response
+        if action_decision["action"] == "RAISE":
+            bet = min(max(action_decision["amount"], min_raise), max_raise)
+            return raise_action['action'], bet
+        elif action_decision["action"] == "CALL":
+            return call['action'], call['amount']
+        else:  # FOLD or any unrecognized action
+            return fold['action'], fold['amount']
+
+    def call_llm_api(self, game_state):
+        # Format the prompt for the LLM
+        prompt = f"""
+            You are a professional poker player, playing against other professional poker players, you need to make the best move possible and you are trying to make the most amount of money over the long run. Evaluate the strength of the hand and consider the pot odds to make your decision.
+            Here is the current game state:
+            - Your hole cards: {game_state['hole_cards']}
+            - Community cards: {game_state['community_cards']}
+            - Current street: {game_state['street']}
+            - Pot size: {game_state['pot_size']}
+            - Call amount: {game_state['call_amount']}
+            - Minimum raise: {game_state['min_raise']}
+            - Maximum raise: {game_state['max_raise']}
+            - Pot odds: {game_state['pot_odds']:.2f}
+                        
+            Format your response strictly as a JSON object with:
+            - "action": either "FOLD", "CALL", or "RAISE"
+            - "amount": an integer amount (only required if action is "RAISE")
             
-        return action['action'], action['amount']
+            Example response:
+            "action": "CALL"
+            or
+            "action": "RAISE", "amount": 50
+            
+            Provide a sentence after the json response of your reasoning why you made that decision
+            """
+        
+        # Initialize OpenAI client with OpenRouter configuration
+        client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=API,
+        )
+        
+        # Make API call
+        response = client.chat.completions.create(
+            model="google/gemini-2.0-flash-exp:free",
+            messages=[
+                    {"role": "user", "content": prompt}
+            ],
+            response_format={"type": "json_object"}
+        )
+        
+        llm_response = response.choices[0].message.content
+        print("Raw LLM response:", llm_response)
+        # file.write(llm_response)
+        # file.write("\n") 
+        # file.close()
+
+        # Try to parse the response as JSON
+        try:
+            # Find JSON content in the response (in case there's extra text)
+            json_start = llm_response.find('{')
+            json_end = llm_response.rfind('}') + 1
+            
+            if json_start >= 0 and json_end > json_start:
+                json_str = llm_response[json_start:json_end]
+                action_dict = json.loads(json_str)
+                
+                # Validate the action dictionary
+                if "action" not in action_dict:
+                    print("Action not found in response, defaulting to FOLD")
+                    return {"action": "FOLD"}
+                
+                # Ensure action is valid
+                action = action_dict["action"].upper()
+                if action not in ["FOLD", "CALL", "RAISE"]:
+                    print(f"Invalid action '{action}', defaulting to FOLD")
+                    return {"action": "FOLD"}
+                
+                # Ensure amount is present for RAISE
+                if action == "RAISE" and "amount" not in action_dict:
+                    print("Amount not specified for RAISE, using minimum raise")
+                    action_dict["amount"] = game_state["min_raise"]
+                
+                return {"action": action, "amount": action_dict.get("amount", 0)}
+            else:
+                print("JSON structure not found in response, defaulting to FOLD")
+                return {"action": "FOLD"}
+                
+        except json.JSONDecodeError as e:
+            print(f"Failed to parse LLM response as JSON: {e}")
+            print("Defaulting to FOLD")
+            return {"action": "FOLD"}
+        except Exception as e:
+            print(f"Unexpected error while processing LLM response: {e}")
+            print("Defaulting to FOLD")
+            return {"action": "FOLD"}   
+              
 
     def receive_game_start_message(self, game_info):
         self.nb_player = game_info['player_num']

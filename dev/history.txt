@@ -1,0 +1,96 @@
+```json
+{
+  "action": "RAISE",
+  "amount": 55
+}
+```
+
+I raised the stake by 55 to maximise my earnings. The deck has no community cards yet and my hole cards, although not the strongest, can potentially make strong combinations like a Straight or a Flush. Raising the stake would give me better odds to win a bigger pot, if my cards hold up post community card reveal.
+```json
+{
+  "action": "RAISE",
+  "amount": 550
+}
+```
+
+The reasoning behind this decision is that I have a fairly strong hand with a Straight draw and could potentially become a Straight flush or a Four of a Kind. With the Pot odds being 0.30, I need to pay approximately $550 to win $385, which is profitable in the long run. Raising the pot will also give me better odds of winning, due to the pot now requiring a larger amount to be paid by any potential callers to see the next street, whilst also increasing the likelihood of my opponents folding weaker hands, thereby decreasing the number of people that I need to beat.
+```json
+{
+  "action": "RAISE",
+  "amount": 5002
+}
+```
+ Raising to 5002 is the best option in this situation because I want to build a large pot to incentivize my opponents to pay me off when they eventually fold, this is also a play to protect my hand as I think it is the best and don't want competitors to get a cheap showdown.
+```json
+{
+  "action": "RAISE",
+  "amount": 4000
+}
+```
+
+The reasoning for this decision is that I have a flush draw and an inside straight draw which typically leads to a raise from the turn to increase aggression and increase the pot size to potentially make the payout higher and compensate for the times my bluff gets caught. Even though there is a decent chance I get caught here, the pot odds favour a raise since the potential reward is high and I might get a better payout by the river.
+```json
+{
+  "action": "RAISE",
+  "amount": 400
+}
+```
+
+I would raise the stakes with a big bet of 400 because I have a strong hand with a Straight Flush on the river. Raising will maximise my potential winnings from this strong hand against the other pros who may call my bluff. 
+
+Let me know if you would like me to walk through a different scenario to evaluate!
+```json
+{
+  "action": "RAISE",
+  "amount": 6560
+}
+```
+
+I raised the stakes by a considerable amount, 6560 to be exact. The reasoning behind this move is to isolate my opponents by making the pot unaffordable for weaker hands, while also attempting to steer the pot away from the many cards that can compete with a high proportion of the deck. 
+
+This move is primarily aimed at maximizing my long-term earnings potential, by attempting to win a sizable pot early and often throughout the game.
+```json
+{
+  "action": "RAISE",
+  "amount": 80
+}
+```
+
+I raised the bet to 80 dollars preflop as I have a very strong hand with a pair of diamonds and I want to build a larger pot to incentivise other players to put more money in should they choose to call allowing me to make more money in the long run. Raising also gives me more information about the strength of my opponents' hands.
+```json
+{
+  "action": "RAISE",
+  "amount": 31500
+}
+```
+
+I raised the maximum amount because I have a straight flush draw and a pair. I need to bet enough to make it expensive for my opponents to chase their draws and see the river, maximizing my winnings in the long run.
+```json
+{
+  "action": "RAISE",
+  "amount": 3450
+}
+```
+
+I raised the stake to 3450 to give myself the best chance of winning the hand at showdown. 
+Raising a decent sized bet here will likely gift me the pot right there, without needing to go any further in the hand, and without seeing any community cards. If they re-raise me, I will be able to understand that they likely have a strong hand and fold. 
+
+If I call, it is suggesting that I am confident in my cards, but also gives my opponent an opportunity to see the hand to the end with minimal betting, learning my habits, and potentially making better decisions against me in future betting rounds.
+```json
+{
+  "action": "RAISE",
+  "amount": 19722
+}
+```
+
+I decided to go all-in as the strongest move to maximize the pot odds. With a pair of halves, and the possibility to achieve a straight, the current strength of my hand is relatively high compared to the flop. Although I am not confident about the chances of me winning at the showdown with such a large bet, going all-in leaves my opponents with tough decisions, increasing the pot size, and ultimately giving me good pot odds to go with my decent hand. 
+
+The reasoning behind this move is to induce a payoff with my pair and straight draw and decrease the chances of my opponents realistically catching up to my hand rank with the community cards still to come.
+```json
+{
+    "action": "RAISE",
+    "amount": 6344
+}
+```
+
+I raised the maximum amount because I have a strong hand, and I want to maximize the amount of money in the pot before the flop, as I have a high chance of winning with at least one pair of nines, and possibly a straight or flush draw.

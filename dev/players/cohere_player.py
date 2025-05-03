@@ -3,7 +3,7 @@ import cohere
 import json
 
 # Replace with your Cohere API key
-COHERE_API_KEY = "lMWcC83xVJlxEE5RahrziIdTiVqGetOp7Ba9YtD4"
+COHERE_API_KEY = ""
 
 
 class CoherePlayer(BasePokerPlayer):

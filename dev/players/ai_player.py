@@ -1,8 +1,8 @@
 from pypokerengine.players import BasePokerPlayer
 from openai import OpenAI
 import json
-API = "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"
-GEMAPI = "AIzaSyCBvmMlQfRNpRlq3UzctB_tUXVKlqgcGQI"
+API = ""
+GEMAPI = ""
 
 
 class AiPlayer(BasePokerPlayer):
